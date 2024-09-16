@@ -20,7 +20,7 @@ begin
    case Mes is
       when 1 | 2 | 12 =>
          Ada.Text_IO.Put_Line("Invierno");
-      when 3 | 4 | 5 =>
+      when 3 | 4 | 5 => -- Tambien se puede escribir como 3..4
          Ada.Text_IO.Put_Line("Primavera");
       when 6 | 7 | 8 =>
          Ada.Text_IO.Put_Line("Verano");

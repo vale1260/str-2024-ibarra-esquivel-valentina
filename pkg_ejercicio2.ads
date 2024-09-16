@@ -8,8 +8,8 @@ package pkg_ejercicio2 is
    -- Procedimiento previamente definido
    procedure otroMensaje;
 
-   -- Nuevo procedimiento público para acceder a la variable privada
-   procedure imprimirNotaMedia;
+   -- Nueva funcion publica para acceder a la variable privada
+   function obtenerNotaMedia return float;
 
 private
    -- Declaración de la variable privada

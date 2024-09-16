@@ -8,12 +8,10 @@ package body pkg_ejercicio2 is
       Ada.Text_IO.Put_Line("Vamos a iniciarnos en el lenguaje Ada");
    end otroMensaje;
 
-   -- Procedimiento para imprimir la nota media
-   procedure imprimirNotaMedia is
+   -- Funcion para imprimir nota media
+   function obtenerNotaMedia return float is
    begin
-      Ada.Text_IO.Put("Nota media: ");
-      Ada.Float_Text_IO.Put(notaMedia, Aft => 1);  -- Un solo decimal
-      Ada.Text_IO.New_Line;
-   end imprimirNotaMedia;
+      return notaMedia;
+   end obtenerNotaMedia;
 
 end pkg_ejercicio2;

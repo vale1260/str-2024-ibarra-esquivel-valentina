@@ -1,21 +1,11 @@
 with Ada.Text_IO;
+with Ada.Float_Text_IO;
 with Ada.Integer_Text_IO;
 with pkg_ejercicio2;
 
 procedure ejercicio3 is
-   -- Procedimiento para convertir TdiasSemana a String
-   function Dia_Semana_To_String(dia : pkg_ejercicio2.TdiasSemana) return String is
-   begin
-      case dia is
-         when pkg_ejercicio2.Lunes     => return "Lunes";
-         when pkg_ejercicio2.Martes    => return "Martes";
-         when pkg_ejercicio2.Miercoles => return "Miercoles";
-         when pkg_ejercicio2.Jueves    => return "Jueves";
-         when pkg_ejercicio2.Viernes   => return "Viernes";
-         when pkg_ejercicio2.Sabado    => return "Sabado";
-         when pkg_ejercicio2.Domingo   => return "Domingo";
-      end case;
-   end Dia_Semana_To_String;
+
+   package Dias_IO is new Ada.Text_IO.Enumeration_IO(Enum => pkg_ejercicio2.TdiasSemana);
 
 begin
    -- Imprimir la variable pública numAlumnos
@@ -23,13 +13,17 @@ begin
    Ada.Integer_Text_IO.Put(pkg_ejercicio2.numAlumnos);
    Ada.Text_IO.New_Line;
 
-   -- Llamar al procedimiento del paquete que imprime la nota media
-   pkg_ejercicio2.imprimirNotaMedia;
+   -- Llamar a la funcion que imprime la nota media
+   Ada.Text_IO.Put("Nota media: ");
+   Ada.Float_Text_IO.Put(pkg_ejercicio2.obtenerNotaMedia, Aft => 1);
+   Ada.Text_IO.New_Line;
 
    -- Recorrer los valores del tipo TdiasSemana y mostrarlos
    for dia in pkg_ejercicio2.TdiasSemana loop
-      Ada.Text_IO.Put_Line(Dia_Semana_To_String(dia));
+      Dias_IO.Put(dia);
+      Ada.Text_IO.New_Line;
    end loop;
+
 end ejercicio3;
 
 -- La variable notaMedia está en la parte privada del paquete,
