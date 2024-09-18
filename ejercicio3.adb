@@ -8,8 +8,8 @@ procedure ejercicio3 is
    package Dias_IO is new Ada.Text_IO.Enumeration_IO(pkg_ejercicio2.TdiasSemana);
 
 begin
-   -- Imprimir la variable p√∫blica numAlumnos
-   Ada.Text_IO.Put_Line("N√∫mero de alumnos: ");
+   -- Imprimir la variable p˙blica numAlumnos
+   Ada.Text_IO.Put_Line("N˙mero de alumnos: ");
    Ada.Integer_Text_IO.Put(pkg_ejercicio2.numAlumnos);
    Ada.Text_IO.New_Line;
 
@@ -24,14 +24,22 @@ begin
       Ada.Text_IO.New_Line;
    end loop;
 
+   -- Solicitar al usuario un dÌa de la semana
+   Ada.Text_IO.Put_Line("Introduce un dia de la semana: ");
+   declare
+      dia_usuario : pkg_ejercicio2.TdiasSemana;
+   begin
+      Dias_IO.Get(dia_usuario);
+
+   -- Verificar si hay clases de STR ese dÌa
+      case dia_usuario is
+         when pkg_ejercicio2.Lunes =>
+            Ada.Text_IO.Put_Line("El Lunes hay clases de STR");
+         when others =>
+            Ada.Text_IO.Put_Line("El " & pkg_ejercicio2.TdiasSemana'Image(dia_usuario) & " no hay clases de STR");
+      end case;
+   exception
+      when Ada.Text_IO.Data_Error =>
+         Ada.Text_IO.Put_Line("El valor introducido no es un dÌa v·lido.");
+   end;
 end ejercicio3;
-
--- La variable notaMedia est√° en la parte privada del paquete,
--- por lo que no puede ser accedida directamente desde fuera del paquete (como desde ejercicio3).
-
--- Soluci√≥n: Se crea el procedimiento imprimirNotaMedia dentro del paquete pkg_ejercicio2 que accede
--- a la variable privada y la imprime. Este procedimiento es p√∫blico, por lo que puede ser llamado
--- desde ejercicio3.
-
--- ejercicio3 invoca a pkg_ejercicio2.imprimirNotaMedia para imprimir el valor de la variable privada
--- notaMedia sin violar las restricciones de visibilidad.
