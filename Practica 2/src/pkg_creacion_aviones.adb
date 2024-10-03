@@ -17,8 +17,11 @@ package body pkg_creacion_aviones is
             ptr_avion := new T_RecordAvion;
            
             ptr_avion.id := id;
-            ptr_avion.velocidad.x := VELOCIDAD_VUELO;
+
+            -- Inicializo velocidad en x e y en cero
+            ptr_avion.velocidad.x := 0;
             ptr_avion.velocidad.y := 0;
+
             ptr_avion.aerovia := aerovia;
             ptr_avion.tren_aterrizaje := False;
             ptr_avion.aerovia_inicial := aerovia;
