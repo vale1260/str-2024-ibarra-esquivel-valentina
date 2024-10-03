@@ -1,17 +1,20 @@
 package body pkg_cronometro_calendar is
    task body actualizar1 is
-      Inicio    : Time;
-      periodo   : constant Duration := 1.0; -- Periodo de 1 segundo
-      Siguiente : Time;
+      Tiempo_Inicio : Time;
+      Tiempo_Actual : Time;
+      Duracion      : Duration;
 
    begin
-      Inicio := Clock; -- Inicializo el tiempo
-      Siguiente := Clock + periodo; -- Calcula el siguiente punto de activacion
+      Tiempo_Inicio := Clock; -- Inicializo el tiempo
 
       loop
-         Actualiza_Cronometro(Clock - Inicio);
-         delay until Siguiente;
-         Siguiente := Siguiente + periodo;
+         delay 1.0;
+
+         Tiempo_Actual := Clock;
+         Duracion := Ada.Calendar."-"(Tiempo_Actual, Tiempo_Inicio);
+         
+         -- Convertir duracion a segundos
+         PKG_graficos.Actualiza_Cronometro(Duracion);
       end loop;
    end;
 end pkg_cronometro_calendar;
