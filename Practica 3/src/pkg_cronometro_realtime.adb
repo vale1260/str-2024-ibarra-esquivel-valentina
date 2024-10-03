@@ -1,17 +1,23 @@
 package body pkg_cronometro_realtime is
    task body actualizar2 is
-      segundo   : Time_Span := Milliseconds(1000);
-      Inicio    : Time;
-      Siguiente : Time;
+      Tiempo_Inicio : Time;
+      Tiempo_Actual : Time;
+      Duracion : Time_Span;
 
    begin
-      Inicio := Clock;
-      Siguiente := Clock + segundo;
+      Tiempo_Inicio := Clock; -- Inicializo
 
       loop
-         Actualiza_Cronometro(To_Duration(Clock - Inicio));
-         delay until Siguiente;
-         Siguiente := Siguiente + segundo;
+         delay 1.0;
+
+         -- Actualiza el tiempo actual
+         Tiempo_Actual := Clock;
+         
+         -- Calcula la duracion desde inicio
+         Duracion := Ada.Real_Time."-"(Tiempo_Actual, Tiempo_Inicio);
+         
+         -- Convertir Time_Span a segundos 
+         PKG_graficos.Actualiza_Cronometro(To_Duration(Duracion));
       end loop;
-   end;
+   end actualizar2;
 end pkg_cronometro_realtime;
