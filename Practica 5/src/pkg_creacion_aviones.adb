@@ -61,7 +61,6 @@ package body pkg_creacion_aviones is
 
    begin
       avion := ptr_avion.all;
-
       inicio_espera := Ada.Real_Time.Clock;
 
       -- Verificar si hay espacio en la zona segura antes de aparecer
@@ -82,8 +81,16 @@ package body pkg_creacion_aviones is
       while True loop
          pkg_memoria_compartida.ocupacion_aerovias(avion.aerovia).liberar_zona_segura(PKG_graficos.Posicion_ZonaEspacioAereo(avion.pos.X));
 
-         -- Solicitar permiso de descenso
-         PKG_Torre_Control.Tarea_Torre_Control.Solicitar_Descenso(aerovia_actual => avion.aerovia, permiso => permiso_descenso);
+         select
+            -- Solicitar permiso de descenso
+            PKG_Torre_Control.Tarea_Torre_Control.Solicitar_Descenso(aerovia_actual => avion.aerovia, permiso => permiso_descenso);
+         then abort
+            -- No recibe el permiso, me sigo moviendo
+            Actualiza_Movimiento(avion);
+            Aparece(avion);
+            delay Duration(RETARDO_MOVIMIENTO);
+         end select;
+
 
          if permiso_descenso then
             -- Cambiar a la aerovía inferior si se concede el permiso
@@ -100,13 +107,8 @@ package body pkg_creacion_aviones is
             -- Verificar si llegó a la última aerovía (para aterrizar)
             if avion.aerovia = T_Rango_AeroVia'First then
                Desaparece(avion);
-               Ada.Text_IO.Put_Line("El avión " & T_IdAvion'Image(avion.id) & " ha aterrizado y desaparece del sistema.");
                exit;
             end if;
-
-         else
-            -- Si no se concede el permiso, esperar y reintentar
-            delay Duration(RETARDO_MOVIMIENTO);
          end if;
       end loop;
 
