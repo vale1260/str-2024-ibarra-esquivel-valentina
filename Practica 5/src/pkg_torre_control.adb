@@ -14,9 +14,7 @@ PACKAGE BODY PKG_Torre_Control IS
    -- DEFINICIÓN DE LA TAREA DE LA TORRE DE CONTROL
    -----------------------------------------------------------------------
    TASK BODY Tarea_Torre_Control IS
-      aviones_en_vuelo : array (T_Rango_AeroVia) of Integer := (others => 0); -- Contador de aviones por aerovia
-      avion            : Ptr_T_RecordAvion;
-      avion_permiso    : Boolean;
+      aviones_en_vuelo : array (T_Rango_AeroVia) of Integer := (others => 0); -- Contador de aviones por aerovía
 
    BEGIN
       PKG_debug.Escribir("======================INICIO TASK Torre_Control");
@@ -25,36 +23,35 @@ PACKAGE BODY PKG_Torre_Control IS
          null;
       END Iniciar_Torre_Control;
 
+
       -- Bucle para peticiones de descenso
       loop
-         ACCEPT Solicitar_Descenso (avion_id : in PKG_tipos.T_IdAvion; aerovia_actual : in PKG_tipos.T_Rango_AeroVia) do
-            PKG_debug.Escribir("Solicitud de descenso para avion: "& T_IdAvion'Image(avion.id));
-
+         ACCEPT Solicitar_Descenso (aerovia_actual : in T_Rango_AeroVia; permiso : out Boolean) do
             declare
                aerovia_inferior : constant T_Rango_AeroVia := aerovia_actual - 1;
 
             begin
+               -- Comprobar si la aerovía inferior tiene espacio para el avión
                if aviones_en_vuelo(aerovia_inferior) < MAX_AVIONES_AEROVIA then
-                  PKG_debug.Escribir("Permiso para descender: " & T_IdAvion'Image(avion.id));
+                  -- Permitir el descenso
                   aviones_en_vuelo(aerovia_inferior) := aviones_en_vuelo(aerovia_inferior) + 1;
-                  avion_permiso := True;
+                  permiso := True;
+                  PKG_debug.Escribir("Permiso concedido para el descenso del avión aerovia ID: " & T_Rango_AeroVia'Image(aerovia_actual));
                else
-                  PKG_debug.Escribir("Permiso denegado: " & T_IdAvion'Image(avion.id));
-                  avion_permiso := False;
+                  -- Denegar el descenso
+                  permiso := False;
+                  PKG_debug.Escribir("Permiso denegado para el descenso del avión aerovia ID: " & T_Rango_AeroVia'Image(aerovia_actual));
                end if;
             end;
          END Solicitar_Descenso;
 
-         ACCEPT Respuesta_Permiso (permiso_concedido : out Boolean) do
-               permiso_concedido := avion_permiso;
-         END Respuesta_Permiso;
-
+         -- Esperar 2 segundos antes de atender otra petición
          delay 2.0;
       end loop;
 
-      exception
-       when event: others =>
-        PKG_debug.Escribir("ERROR en TASK Torre_Control: " & Exception_Name(Exception_Identity(event)));
-
-   END Tarea_Torre_Control;
+   exception
+      when others =>
+         --PKG_debug.Escribir("ERROR en TASK Torre_Control: " & Exception_Name(Exception_Identity(event)));
+         PKG_debug.Escribir("ERROR en TASK Torre_Control: Torre");
+   end Tarea_Torre_Control;
 end PKG_Torre_Control;
