@@ -63,11 +63,11 @@ package body pkg_creacion_aviones is
       avion := ptr_avion.all;
       inicio_espera := Ada.Real_Time.Clock;
 
-      -- Verificar si hay espacio en la zona segura antes de aparecer
-      --pkg_memoria_compartida.ocupacion_aerovias(avion.aerovia).check_espacio;
-
       -- Medir el tiempo de espera
       tiempo_espera := Ada.Real_Time.To_Duration(Ada.Real_Time.Clock - inicio_espera);
+
+      -- Verificar si hay espacio en la zona segura antes de aparecer
+      pkg_memoria_compartida.ocupacion_aerovias(avion.aerovia).check_espacio;
 
       if tiempo_espera > 1.0 then
          avion.color := Yellow;
@@ -85,29 +85,32 @@ package body pkg_creacion_aviones is
             -- Solicitar permiso de descenso
             PKG_Torre_Control.Tarea_Torre_Control.Solicitar_Descenso(aerovia_actual => avion.aerovia, permiso => permiso_descenso);
          then abort
-            -- No recibe el permiso, me sigo moviendo
-            Actualiza_Movimiento(avion);
-            Aparece(avion);
-            delay Duration(RETARDO_MOVIMIENTO);
+            loop
+               -- No recibe el permiso, me sigo moviendo
+               Actualiza_Movimiento(avion);
+               delay Duration(RETARDO_MOVIMIENTO);
+            end loop;
          end select;
 
 
          if permiso_descenso then
-            -- Cambiar a la aerovía inferior si se concede el permiso
-            avion.aerovia := avion.aerovia - 1;
-            avion.color := Blue;
+            -- Verificar si la zona inferior esta libre antes de bajar
+            if pkg_memoria_compartida.ocupacion_aerovias(avion.aerovia+1).esta_ocupada = False then
+               -- Cambiar a la aerovía inferior si se concede el permiso
+               avion.aerovia := avion.aerovia + 1;
+               avion.color := Blue;
 
             -- Actualizar posición en la nueva aerovía
             pkg_memoria_compartida.ocupacion_aerovias(avion.aerovia).marcar_zona_segura(PKG_graficos.Posicion_ZonaEspacioAereo(avion.pos.X));
 
             -- Esta función debería actualizar la posición del avión
             Actualiza_Movimiento(avion);
-            Aparece(avion);
 
-            -- Verificar si llegó a la última aerovía (para aterrizar)
-            if avion.aerovia = T_Rango_AeroVia'First then
-               Desaparece(avion);
-               exit;
+               -- Verificar si llegó a la última aerovía (para aterrizar)
+               if avion.aerovia = T_Rango_AeroVia'First then
+                  Desaparece(avion);
+                  exit;
+               end if;
             end if;
          end if;
       end loop;

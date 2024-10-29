@@ -28,7 +28,7 @@ PACKAGE BODY PKG_Torre_Control IS
       loop
          ACCEPT Solicitar_Descenso (aerovia_actual : in T_Rango_AeroVia; permiso : out Boolean) do
             declare
-               aerovia_inferior : constant T_Rango_AeroVia := aerovia_actual - 1;
+               aerovia_inferior : constant T_Rango_AeroVia := aerovia_actual + 1;
 
             begin
                -- Comprobar si la aerovía inferior tiene espacio para el avión
